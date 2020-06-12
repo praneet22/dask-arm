@@ -16,23 +16,28 @@ cat > /home/$USERNAME/dask-head.sh << EOM
 #!/bin/bash
 conda activate $CONDA_ENV
 
-NUM_GPUS=\`nvidia-smi -L | wc -l\`
-
-dask-scheduler
+dask-scheduler -port 8786
 
 jupyter lab --ip 0.0.0.0 --port 8888 --NotebookApp.token=$JUPYTER_Token --allow-root --no-browser
 EOM
+
+
 
 cat > /home/$USERNAME/dask-worker.sh << EOM
 #!/bin/bash
 conda activate $CONDA_ENV
 
-NUM_GPUS=\`nvidia-smi -L | wc -l\`
-
-dask-worker tcp://$DASK_SCHEDULER_IP:8786
+while true
+do
+   dask-worker tcp://$DASK_SCHEDULER_IP:8786 --dashboard-address 8787 --nanny-port 8001
+	echo Dask exited. Auto-restarting in 1 second...
+	sleep 1
+done
 EOM
 
-chmod +x /home/$USERNAME/dask-head.sh
+
+
+chmod +x /home/$USERNAME/dask-scheduler.sh
 chmod +x /home/$USERNAME/dask-worker.sh
 
 cat > /lib/systemd/system/dask.service << EOM
