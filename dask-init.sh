@@ -16,6 +16,7 @@ cat > /home/$USERNAME/dask-head.sh << EOM
 conda activate $CONDA_ENV
 
 ulimit -n 65536
+export DASK_SCHEDULER_ADDRESS=tcp://localhost:8786
 
 cd /home/$USERNAME
 dask-scheduler --version
@@ -63,8 +64,8 @@ systemctl enable dask
 echo "Starting dask..."
 systemctl start dask
 
-
 if [ "$TYPE" = "head" ]; then
    echo "Cloning dask-example repo..."
    git clone https://github.com/dask/dask-docker.git   /home/$USERNAME/notebooks/dask
+   chmod -R 755 /home/$USERNAME/notebooks/dask
 fi
