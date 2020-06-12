@@ -5,7 +5,6 @@ CONDA_ENV=$2
 WHEEL=$3
 DASK_SCHEDULER_IP=$4
 TYPE=$5
-JUPYTER_Token="test"
 
 echo "Installing wheel..."
 sudo -u $USERNAME -i /bin/bash -l -c "conda init bash"
@@ -16,9 +15,8 @@ cat > /home/$USERNAME/dask-head.sh << EOM
 #!/bin/bash
 conda activate $CONDA_ENV
 
-dask-scheduler -port 8786
+dask-scheduler --port 8786
 
-jupyter lab --ip 0.0.0.0 --port 8888 --NotebookApp.token=$JUPYTER_Token --allow-root --no-browser
 EOM
 
 
@@ -29,9 +27,9 @@ conda activate $CONDA_ENV
 
 while true
 do
-   dask-worker tcp://$DASK_SCHEDULER_IP:8786 --dashboard-address 8787 --nanny-port 8001
-	echo Dask exited. Auto-restarting in 1 second...
-	sleep 1
+   dask-worker tcp://$DASK_SCHEDULER_IP:8786 --nanny-port 8001
+   echo Dask exited. Auto-restarting in 1 second...
+   sleep 1
 done
 EOM
 
@@ -52,7 +50,7 @@ WantedBy=multi-user.target
 EOM
 
 echo "Configure dask to start at boot..."
-systemctl enable dask
+sudo systemctl enable dask
 
 echo "Starting dask..."
-systemctl start dask
+sudo systemctl start dask
