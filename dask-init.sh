@@ -32,7 +32,7 @@ NUM_GPUS=\`nvidia-smi -L | wc -l\`
 dask-worker tcp://$DASK_SCHEDULER_IP:8786
 EOM
 
-chmod +x /home/$USERNAME/dask-scheduler.sh
+chmod +x /home/$USERNAME/dask-head.sh
 chmod +x /home/$USERNAME/dask-worker.sh
 
 cat > /lib/systemd/system/dask.service << EOM
