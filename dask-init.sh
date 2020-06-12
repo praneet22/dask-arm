@@ -35,7 +35,7 @@ EOM
 
 
 
-chmod +x /home/$USERNAME/dask-scheduler.sh
+chmod +x /home/$USERNAME/dask-head.sh
 chmod +x /home/$USERNAME/dask-worker.sh
 
 cat > /lib/systemd/system/dask.service << EOM
