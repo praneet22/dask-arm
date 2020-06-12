@@ -14,9 +14,8 @@ echo "Setting up service scripts..."
 cat > /home/$USERNAME/dask-head.sh << EOM
 #!/bin/bash
 conda activate $CONDA_ENV
-
+cd /home/$USERNAME
 dask-scheduler --port 8786
-
 EOM
 
 
@@ -24,7 +23,7 @@ EOM
 cat > /home/$USERNAME/dask-worker.sh << EOM
 #!/bin/bash
 conda activate $CONDA_ENV
-
+cd /home/$USERNAME
 while true
 do
    dask-worker tcp://$DASK_SCHEDULER_IP:8786 --nanny-port 8001
@@ -50,7 +49,7 @@ WantedBy=multi-user.target
 EOM
 
 echo "Configure dask to start at boot..."
-sudo systemctl enable dask
+systemctl enable dask
 
 echo "Starting dask..."
-sudo systemctl start dask
+systemctl start dask
