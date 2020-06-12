@@ -14,16 +14,25 @@ echo "Setting up service scripts..."
 cat > /home/$USERNAME/dask-head.sh << EOM
 #!/bin/bash
 conda activate $CONDA_ENV
+
+ulimit -n 65536
+
 cd /home/$USERNAME
+dask-scheduler --version
+
 dask-scheduler --port 8786
 EOM
-
 
 
 cat > /home/$USERNAME/dask-worker.sh << EOM
 #!/bin/bash
 conda activate $CONDA_ENV
+
+ulimit -n 65536
+
 cd /home/$USERNAME
+dask-worker --version
+
 while true
 do
    dask-worker tcp://$DASK_SCHEDULER_IP:8786 --nanny-port 8001
@@ -53,3 +62,9 @@ systemctl enable dask
 
 echo "Starting dask..."
 systemctl start dask
+
+
+if [ "$TYPE" = "head" ]; then
+   echo "Cloning dask-example repo..."
+   git clone https://github.com/dask/dask-docker.git   /home/$USERNAME/notebooks/dask
+fi
